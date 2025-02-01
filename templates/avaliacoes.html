@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Avaliações</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="icon" href="/static/img/logo fav icon.png" type="image/png">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <link rel="icon" href="/static/img/icone-mobile.png">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+            background-color: #1a1a2e;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #fbc02d;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            max-width: 1200px;
+            width: 100%;
+        }
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card:hover{
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+        body {
+            overflow-y: hidden;
+        }
+        .card {
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            text-align: left;
+        }
+        .card:nth-child(1) { background: #ff5252; }
+        .card:nth-child(2) { background: #00e676; }
+        .card:nth-child(3) { background: #2979ff; }
+        .card:nth-child(4) { background: #ffca28; }
+        .card span {
+            display: block;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .chart-container {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .datetime {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+        }
+        .chart-container:hover{
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="datetime" id="datetime"></div>
+    <h1>Relatório de Avaliações</h1>
+    <div class="container">
+        <div class="cards">
+            <div class="card"><span>Média do Dia</span> {{ media_dia|round(2) }}</div>
+            <div class="card"><span>Média da Semana</span> {{ media_semana|round(2) }}</div>
+            <div class="card"><span>Média do Mês</span> {{ media_mes|round(2) }}</div>
+            <div class="card"><span>Média Total</span> {{ media_total|round(2) }}</div>
+        </div>
+        <div class="chart-container">
+            <canvas id="chartAvaliacao"></canvas>
+        </div>
+    </div>
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const formattedDate = now.toLocaleString('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            document.getElementById('datetime').textContent = formattedDate;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+    </script>
+    <script>
+        var ctx = document.getElementById('chartAvaliacao').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                datasets: [{
+                    label: 'Média de Avaliações por Dia',
+                    data: [{{ media_dom|round(2) }}, {{ media_seg|round(2) }}, {{ media_ter|round(2) }}, {{ media_qua|round(2) }}, {{ media_qui|round(2) }}, {{ media_sex|round(2) }}, {{ media_sab|round(2) }}],
+                    backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                    borderColor: '#ff9800',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ff9800',
+                    pointBorderColor: '#fff',
+                    pointRadius: 6,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: '#fff' }
+                    },
+                    x: { ticks: { color: '#fff' } }
+                },
+                plugins: {
+                    legend: { labels: { color: '#fff' } }
+                }
+            }
+        });
+    </script>
+    <script>
+        // Define o tempo limite para recarregar a página (30 minutos)
+        let tempoRecarregar = 10 * 60 * 1000; // 10 minutos em milissegundos
+        
+        // Aguarda o tempo definido antes de recarregar a página
+        setTimeout(() => {
+            console.log("Recarregando a página...");
+            location.reload();
+        }, tempoRecarregar);
+    </script>
+  
+</body>
+</html>

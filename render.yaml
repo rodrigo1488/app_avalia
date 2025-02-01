@@ -1,0 +1,12 @@
+
+services:
+  - type: web
+    name: avaliacao-flask
+    env: python
+    buildCommand: ""
+    startCommand: gunicorn -b 0.0.0.0:$PORT app:app  # A aplicação 'app' é no arquivo 'main.py' dentro de 'backend'
+    autoDeploy: true
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    runtime: python3.9
