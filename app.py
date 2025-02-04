@@ -1,18 +1,35 @@
 from flask import Flask, request, jsonify, render_template
-from supabase import create_client
-from datetime import datetime, timezone, timedelta
+import sqlite3
+from sqlite3 import Error
+from datetime import datetime, timezone
 import threading
 import time
 import os
 
 app = Flask(__name__)
 
-supabase_url = 'https://xgzjguuqunjyurydwiyc.supabase.co'
-supabase_key = os.getenv(
-    'SUPABASE_KEY',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhnempndXVxdW5qeXVyeWR3aXljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgzODEwMDUsImV4cCI6MjA1Mzk1NzAwNX0.6cnkhfclCUq774qVLYq-FQA7As8mLzf7etTdREkWozQ'
-)
-supabase = create_client(supabase_url, supabase_key)
+# Função para obter conexão com o banco SQLite
+def get_db_connection():
+    conn = sqlite3.connect('avaliacoes.db', detect_types=sqlite3.PARSE_DECLTYPES)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+# Função para inicializar o banco de dados (cria a tabela se não existir)
+def init_db():
+    try:
+        conn = get_db_connection()
+        with conn:
+            conn.execute('''
+                CREATE TABLE IF NOT EXISTS avaliacao (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nota INTEGER NOT NULL,
+                    data TEXT NOT NULL
+                )
+            ''')
+        conn.close()
+        print("Banco de dados inicializado com sucesso!")
+    except Error as e:
+        print(f"Erro ao inicializar o banco de dados: {e}")
 
 @app.route('/')
 def home():
@@ -25,83 +42,83 @@ def renderizar_avaliacao():
 # Rota para receber a avaliação (requisição POST)
 @app.route('/avaliacao', methods=['POST'])
 def receber_avaliacao():
-    # Recupera os dados enviados
     data = request.json
     nota = data.get("nota")
 
-    # Verifica se a nota é válida
+    # Validação da nota
     if nota is None or not isinstance(nota, (int, float)) or not (1 <= nota <= 10):
         return jsonify({"erro": "Nota inválida"}), 400
 
     try:
-        # Insere a avaliação na tabela 'avaliacao' do Supabase
-        response = supabase.table("avaliacao").insert({
-            "nota": nota,
-            "data": datetime.now(timezone.utc).isoformat()
-        }).execute()
-
-        # Se a inserção for bem-sucedida, retorna uma resposta JSON
-        if response.data:
-            return jsonify({"mensagem": "Avaliação registrada com sucesso!", "mostrar_modal": True}), 201
-        else:
-            return jsonify({"erro": "Erro ao registrar avaliação"}), 500
-
+        conn = get_db_connection()
+        cur = conn.cursor()
+        # Insere a avaliação com a data atual no formato ISO
+        cur.execute(
+            "INSERT INTO avaliacao (nota, data) VALUES (?, ?)",
+            (nota, datetime.now(timezone.utc).isoformat())
+        )
+        conn.commit()
+        conn.close()
+        return jsonify({"mensagem": "Avaliação registrada com sucesso!", "mostrar_modal": True}), 201
     except Exception as e:
         print(f"Erro ao registrar avaliação: {e}")
         return jsonify({"erro": "Erro inesperado ao registrar avaliação"}), 500
 
-
-
 @app.route('/avaliacoes', methods=['GET'])
 def listar_avaliacoes():
     try:
-        agora = datetime.now(timezone.utc)
-        response = supabase.table("avaliacao").select("*").execute()
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM avaliacao")
+        avaliacoes = cur.fetchall()
+        conn.close()
 
-        if not response.data:
-            return render_template("avaliacoes.html", 
-                media_dia=0, 
-                media_semana=0, 
-                media_mes=0, 
-                media_total=0, 
-                media_dom=0, media_seg=0, media_ter=0, media_qua=0, media_qui=0, media_sex=0, media_sab=0
-            )
-
-        avaliacoes = response.data
+        # Calcula as médias por dia da semana
         medias_semana = {i: [] for i in range(7)}
-        
         for a in avaliacoes:
             try:
                 data_avaliacao = datetime.fromisoformat(a["data"]).replace(tzinfo=timezone.utc)
-                dia_semana = data_avaliacao.weekday()
+                dia_semana = data_avaliacao.weekday()  # 0: segunda, 6: domingo
                 medias_semana[dia_semana].append(float(a["nota"]))
             except Exception as e:
                 print(f"Erro ao processar avaliação: {e}")
-        
-        medias_calculadas = {i: sum(medias_semana[i]) / len(medias_semana[i]) if medias_semana[i] else 0 for i in range(7)}
-        total_avaliacoes = sum(len(medias_semana[i]) for i in range(7))
-        media_total = sum(sum(medias_semana[i]) for i in range(7)) / total_avaliacoes if total_avaliacoes > 0 else 0
 
+        # Calcula a média para cada dia
+        medias_calculadas = {
+            i: sum(medias_semana[i]) / len(medias_semana[i]) if medias_semana[i] else 0
+            for i in range(7)
+        }
+        total_avaliacoes = sum(len(medias_semana[i]) for i in range(7))
+        media_total = (sum(sum(medias_semana[i]) for i in range(7)) / total_avaliacoes) if total_avaliacoes > 0 else 0
+
+        agora = datetime.now(timezone.utc)
         return render_template("avaliacoes.html", 
             media_dia=medias_calculadas.get(agora.weekday(), 0),
-            media_semana=sum(sum(medias_semana[i]) for i in range(7)) / total_avaliacoes if total_avaliacoes > 0 else 0,
+            media_semana=(sum(sum(medias_semana[i]) for i in range(7)) / total_avaliacoes) if total_avaliacoes > 0 else 0,
             media_mes=media_total,
             media_total=media_total,
-            media_dom=medias_calculadas[6], media_seg=medias_calculadas[0], media_ter=medias_calculadas[1],
-            media_qua=medias_calculadas[2], media_qui=medias_calculadas[3], media_sex=medias_calculadas[4], media_sab=medias_calculadas[5]
+            media_dom=medias_calculadas.get(6, 0),
+            media_seg=medias_calculadas.get(0, 0),
+            media_ter=medias_calculadas.get(1, 0),
+            media_qua=medias_calculadas.get(2, 0),
+            media_qui=medias_calculadas.get(3, 0),
+            media_sex=medias_calculadas.get(4, 0),
+            media_sab=medias_calculadas.get(5, 0)
         )
     
     except Exception as e:
         print(f"Erro ao buscar avaliações: {e}")
         return jsonify({"erro": "Erro inesperado ao buscar avaliações"}), 500
 
+# Função opcional para atualizar avaliações periodicamente (se necessário)
 def atualizar_avaliacoes_periodicamente():
     with app.app_context():
         while True:
             print("Atualizando avaliações...")
             listar_avaliacoes()
             time.sleep(1800)
-
+cert_path = os.path.join(os.getcwd(), 'cert.pem')
+key_path = os.path.join(os.getcwd(), 'chave.pem')
 if __name__ == '__main__':
-
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=True)
+    init_db()
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=(cert_path, key_path))
