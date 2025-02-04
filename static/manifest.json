@@ -4,7 +4,7 @@
     "short_name": "Avaliação de Serviços",
     "icons": [
       {
-        "src": "/static/img/icone-mobile.png",
+        "src": "/static/img/.png",
         "sizes": "192x192",
         "type": "image/png"
       },
