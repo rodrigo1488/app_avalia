@@ -1,3 +1,4 @@
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask, request, jsonify, render_template
 import sqlite3
 from sqlite3 import Error
@@ -118,6 +119,10 @@ def atualizar_avaliacoes_periodicamente():
             listar_avaliacoes()
             time.sleep(1800)
 
+
+# ... restante do código da aplicação ...
+
 if __name__ == '__main__':
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
     init_db()
-    app.run(host='0.0.0.0', port=5000, debug=True, )
+    app.run(host='0.0.0.0', port=5000, debug=True)
