@@ -117,8 +117,7 @@ def atualizar_avaliacoes_periodicamente():
             print("Atualizando avaliações...")
             listar_avaliacoes()
             time.sleep(1800)
-cert_path = os.path.join(os.getcwd(), 'cert.pem')
-key_path = os.path.join(os.getcwd(), 'chave.pem')
+
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context=(cert_path, key_path))
+    app.run(host='0.0.0.0', port=5000, debug=True, )
