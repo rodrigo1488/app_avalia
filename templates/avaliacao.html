@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,15 +17,19 @@
             margin: 50px;
             background-color: #121212;
             color: white;
+            overflow: hidden;
+            /* Bloqueia o scroll */
         }
+
         .botoes {
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
         }
+
         button {
-            padding:30px;
+            padding: 30px;
             font-size: 20px;
             cursor: pointer;
             border: none;
@@ -32,34 +37,68 @@
             box-shadow: 5px 5px 10px #0a0a0a, -5px -5px 10px #1a1a1a;
             transition: transform 0.2s, box-shadow 0.2s;
         }
+
         button:hover {
             transform: scale(1.1);
             box-shadow: 3px 3px 10px rgba(255, 255, 255, 0.3);
         }
-        button:nth-child(1) { background: #ff0000; }
-        button:nth-child(2) { background: #ff3300; }
-        button:nth-child(3) { background: #ff6600; }
-        button:nth-child(4) { background: #ff9900; }
-        button:nth-child(5) { background: #ffcc00; }
-        button:nth-child(6) { background: #ffff00; }
-        button:nth-child(7) { background: #ccff00; }
-        button:nth-child(8) { background: #99ff00; }
-        button:nth-child(9) { background: #66ff00; }
-        button:nth-child(10) { background: #33ff00; }
+
+        button:nth-child(1) {
+            background: #ff0000;
+        }
+
+        button:nth-child(2) {
+            background: #ff3300;
+        }
+
+        button:nth-child(3) {
+            background: #ff6600;
+        }
+
+        button:nth-child(4) {
+            background: #ff9900;
+        }
+
+        button:nth-child(5) {
+            background: #ffcc00;
+        }
+
+        button:nth-child(6) {
+            background: #ffff00;
+        }
+
+        button:nth-child(7) {
+            background: #ccff00;
+        }
+
+        button:nth-child(8) {
+            background: #99ff00;
+        }
+
+        button:nth-child(9) {
+            background: #66ff00;
+        }
+
+        button:nth-child(10) {
+            background: #33ff00;
+        }
+
         .container {
-            max-width:80%;
+            max-width: 95%;
             margin: auto;
             padding: 20px;
             background: #1e1e1e;
             border-radius: 15px;
             box-shadow: 10px 10px 20px #0a0a0a, -10px -10px 20px #1a1a1a;
         }
+
         #mensagem {
             margin-top: 20px;
             font-size: 20px;
             font-weight: bold;
             color: #ffcc00;
         }
+
         .modal {
             display: none;
             position: fixed;
@@ -71,16 +110,26 @@
             border-radius: 10px;
             box-shadow: 5px 5px 10px #0a0a0a, -5px -5px 10px #1a1a1a;
         }
+
         .logo-container {
             margin-top: 30px;
         }
+
         .logo-container img {
-            max-width:100px;
+            align-self: start;
+            s max-width: 100px;
             border-radius: 10px;
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
         }
+
+        img {
+
+            width: 600px;
+            height: 150px;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Avalie nosso serviço</h1>
@@ -100,7 +149,7 @@
         <p id="mensagem"></p>
     </div>
     <img src="/static/img/logo login.png" alt="Logo" class="logo-container">
-   
+
 
     <div id="modal" class="modal">
         <p>Obrigado pela sua avaliação!😄</p>
@@ -113,16 +162,25 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nota: nota })
             })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("modal").style.display = "block";
-                setTimeout(() => {
-                    document.getElementById("modal").style.display = "none";
-                    location.reload();
-                }, 1000);
-            })
-            .catch(error => console.error('Erro:', error));
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("modal").style.display = "block";
+                    setTimeout(() => {
+                        document.getElementById("modal").style.display = "none";
+                        location.reload();
+                    }, 1000);
+                })
+                .catch(error => console.error('Erro:', error));
         }
+        function bloquearScroll() {
+            document.body.style.overflow = 'hidden'; // Bloqueia o scroll
+        }
+
+        function liberarScroll() {
+            document.body.style.overflow = 'auto'; // Libera o scroll
+        }
+
     </script>
 </body>
+
 </html>
