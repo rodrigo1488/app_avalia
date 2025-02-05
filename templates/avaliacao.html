@@ -84,6 +84,7 @@
         }
 
         .container {
+            
             max-width: 1000px;
             margin: auto;
             padding: 20px;
@@ -99,41 +100,120 @@
             color: #ffcc00;
         }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #1e1e1e;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 5px 5px 10px #0a0a0a, -5px -5px 10px #1a1a1a;
-        }
+
 
         .logo-container {
-            margin-top: 30px;
+            margin-top: 150px;
         }
 
         .logo-container img {
-            align-self: start;
+           
             max-width: 100px;
             border-radius: 10px;
             box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
         }
 
         img {
-
+           
+            align-self: start;
             width: 600px;
             height: 150px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            /* Centraliza verticalmente */
+            left: 50%;
+            /* Centraliza horizontalmente */
+            transform: translate(-50%, -50%);
+            /* Centraliza exatamente no meio */
+            background: #1e1e1e;
+            /* Cor de fundo */
+            padding: 20px;
+            /* Espaçamento interno */
+            border-radius: 10px;
+            /* Bordas arredondadas */
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.6);
+            /* Sombra para destacar o modal */
+            width: 90%;
+            /* Largura responsiva */
+            max-width: 400px;
+            /* Limita o tamanho máximo */
+            text-align: center;
+            /* Centraliza o texto no modal */
+            z-index: 1000;
+            /* Garante que o modal fique acima de outros elementos */
+        }
+
+        #feedbackModal textarea {
+            width: 100%;
+            /* Preenche a largura do modal */
+            height: 100px;
+            /* Altura fixa para o campo de texto */
+            margin-bottom: 10px;
+            /* Espaçamento inferior */
+            border-radius: 5px;
+            /* Bordas arredondadas */
+            border: 1px solid #ccc;
+            /* Bordas claras */
+            padding: 10px;
+            /* Espaçamento interno do campo */
+            background-color: #2a2a2a;
+            /* Fundo escuro */
+            color: white;
+            /* Texto branco */
+            resize: none;
+            /* Desativa redimensionamento manual */
+        }
+
+        #intermediateModal button,
+        #feedbackModal button {
+            margin-top: 10px;
+            /* Espaçamento superior */
+            padding: 10px 20px;
+            /* Tamanho do botão */
+            background-color: #ff6600;
+            /* Cor de fundo */
+            border: none;
+            /* Remove borda padrão */
+            color: white;
+            /* Cor do texto */
+            border-radius: 5px;
+            /* Bordas arredondadas */
+            cursor: pointer;
+            /* Cursor de ponteiro ao passar o mouse */
+            transition: background-color 0.3s ease;
+            /* Efeito suave ao passar o mouse */
+        }
+
+        #intermediateModal button:hover,
+        #feedbackModal button:hover {
+            background-color: #ff9900;
+            /* Cor mais clara ao passar o mouse */
+        }
+
+        /* Fundo de sobreposição para destacar o modal */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            /* Fundo semi-transparente */
+            z-index: 999;
+            /* Colocado abaixo do modal */
+            display: none;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Avalie nosso serviço</h1>
-        <p>Escolha uma nota para avaliar nosso serviço</p>
+    <div class="container" style="margin-top: 100px;">
+        <h1 style="margin-bottom: 30px;"><strong>Avalie nosso atendimento</strong></h1>
+      
         <div class="botoes">
             <button onclick="enviarAvaliacao(1)">1</button>
             <button onclick="enviarAvaliacao(2)">2</button>
@@ -151,27 +231,28 @@
     <img src="/static/img/logo login.png" alt="Logo" class="logo-container">
 
 
-    <div id="modal" class="modal">
-        <p>Obrigado pela sua avaliação!😄</p>
+    <div id="modal" class="modal" style="max-width: 50%; height: 30%;  justify-content: center; align-items: center;" >
+        <h1>Obrigado pela sua avaliação!😄</h1>
+    </div>
+    <!-- Modal de Feedback -->
+    <div id="feedbackModal" class="modal"  style="max-width: 50%; height: 40%;">
+        <h4>Por favor, nos diga o motivo da sua avaliação baixa:</h4>
+        <textarea id="feedbackInput" rows="4" placeholder="Digite aqui seu feedback..."></textarea>
+        <button id="sendFeedbackBtn" class="btn btn-primary">Enviar Feedback</button>
+        <button id="closeFeedbackModalBtn" class="btn btn-secondary">Fechar</button>
+    </div>
+    <!-- Modal Intermediário -->
+    <div id="intermediateModal" class="modal" style="max-width: 50%; height: 30%;">
+        <h4>Sentimos muito por não conseguir lhe atender da melhor forma! 😢</h4>
+        <button id="leaveFeedbackBtn">Deixar Feedback</button>
     </div>
 
+
+
+
+
     <script>
-        function enviarAvaliacao(nota) {
-            fetch('/avaliacao', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nota: nota })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("modal").style.display = "block";
-                    setTimeout(() => {
-                        document.getElementById("modal").style.display = "none";
-                        location.reload();
-                    }, 1000);
-                })
-                .catch(error => console.error('Erro:', error));
-        }
+
         function bloquearScroll() {
             document.body.style.overflow = 'hidden'; // Bloqueia o scroll
         }
@@ -181,6 +262,72 @@
         }
 
     </script>
+    <script>
+        function enviarAvaliacao(nota) {
+            fetch('/avaliacao', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nota: nota })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (nota < 5) {
+                        // Mostrar o modal intermediário
+                        const intermediateModal = document.getElementById("intermediateModal");
+                        intermediateModal.style.display = "block";
+
+                        // Timer para fechar o modal após 4 segundos, se o botão não for clicado
+                        const closeTimer = setTimeout(() => {
+                            intermediateModal.style.display = "none";
+                            location.reload(); // Voltar à tela de avaliação
+                        }, 5000);
+
+                        // Se o usuário clicar em "Deixar Feedback"
+                        document.getElementById("leaveFeedbackBtn").addEventListener("click", function () {
+                            clearTimeout(closeTimer); // Cancelar o fechamento automático
+                            intermediateModal.style.display = "none";
+                            document.getElementById("feedbackModal").style.display = "block"; // Abrir modal de feedback
+                        });
+
+                    } else {
+                        // Mostrar o modal de agradecimento
+                        document.getElementById("modal").style.display = "block";
+                        setTimeout(() => {
+                            document.getElementById("modal").style.display = "none";
+                            location.reload();
+                        }, 1000);
+                    }
+                })
+                .catch(error => console.error('Erro:', error));
+        }
+
+        // Fechar modal de feedback após enviar o feedback
+        document.getElementById("sendFeedbackBtn").addEventListener("click", function () {
+            const feedback = document.getElementById("feedbackInput").value;
+
+            fetch('/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ feedback: feedback })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.mensagem || "Feedback enviado com sucesso!");
+                    document.getElementById("feedbackModal").style.display = "none";
+                    location.reload(); // Voltar à tela de avaliação
+                })
+                .catch(error => console.error('Erro ao enviar feedback:', error));
+        });
+
+        // Fechar modal de feedback manualmente
+        document.getElementById("closeFeedbackModalBtn").addEventListener("click", function () {
+            document.getElementById("feedbackModal").style.display = "none";
+        });
+
+        
+    </script>
+
+
 </body>
 
 </html>
