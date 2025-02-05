@@ -70,6 +70,8 @@ def login():
             print(f"Erro ao realizar login: {e}")
             return render_template('login.html', error="Erro ao processar o login")
 
+
+
 # Rota de logout
 @app.route('/logout', methods=['GET'])
 def logout():
@@ -81,6 +83,63 @@ def logout():
 @app.route('/avaliacao', methods=['GET'])
 def renderizar_avaliacao():
     return render_template('avaliacao.html')
+
+@app.route('/getData', methods=['GET'])
+def get_data():
+    try:
+        empresa_id = request.cookies.get('empresa_id')
+
+        if not empresa_id:
+            return jsonify({"erro": "Usuário não autenticado"}), 401
+
+        agora = datetime.now(timezone.utc)
+
+        response = supabase.table("avaliacao").select("*").eq("empresa_id", empresa_id).execute()
+
+        if not response.data:
+            return jsonify({"labels": [], "values": [], "label": "Sem dados"}), 200
+
+        avaliacoes = response.data
+        medias_semana = {i: [] for i in range(7)}
+
+        for a in avaliacoes:
+            try:
+                data_avaliacao = datetime.fromisoformat(a["data"]).replace(tzinfo=timezone.utc)
+                dia_semana = data_avaliacao.weekday()
+                medias_semana[dia_semana].append(float(a["nota"]))
+            except Exception as e:
+                print(f"Erro ao processar avaliação: {e}")
+
+        medias_calculadas = {i: sum(medias_semana[i]) / len(medias_semana[i]) if medias_semana[i] else 0 for i in range(7)}
+        total_avaliacoes = sum(len(medias_semana[i]) for i in range(7))
+        media_total = sum(sum(medias_semana[i]) for i in range(7)) / total_avaliacoes if total_avaliacoes > 0 else 0
+
+        tipo = request.args.get("type")
+
+        if tipo == "dia":
+            labels = ["Hoje"]
+            values = [medias_calculadas.get(agora.weekday(), 0)]
+            label = "Média do Dia"
+        elif tipo == "semana":
+            labels = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"]
+            values = [medias_calculadas[i] for i in range(7)]
+            label = "Média da Semana"
+        elif tipo == "mes":
+            labels = ["Média do Mês"]
+            values = [media_total]
+            label = "Média do Mês"
+        elif tipo == "total":
+            labels = ["Média Geral"]
+            values = [media_total]
+            label = "Média Geral"
+        else:
+            return jsonify({"erro": "Tipo inválido"}), 400
+
+        return jsonify({"labels": labels, "values": values, "label": label})
+
+    except Exception as e:
+        print(f"Erro: {e}")
+        return jsonify({"erro": "Erro interno do servidor"}), 500
 
 # Rota para receber a avaliação (requisição POST)
 @app.route('/avaliacao', methods=['POST'])

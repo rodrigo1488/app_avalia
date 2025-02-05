@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,29 +8,30 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="icon" href="/static/img/logo fav icon.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <link rel="icon" href="/static/img/icone-mobile.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-                .fixed-button {
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 1050; /* Mantém o botão acima de tudo */
-                border-radius: 50px;
-                padding: 15px 20px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-                background: linear-gradient(145deg, #e6e6e6, #ffffff);
-                border: none;
-                color: #333;
-                transition: all 0.2s ease-in-out;
+        .fixed-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1050;
+            /* Mantém o botão acima de tudo */
+            border-radius: 50px;
+            padding: 15px 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(145deg, #e6e6e6, #ffffff);
+            border: none;
+            color: #333;
+            transition: all 0.2s ease-in-out;
         }
+
         .fixed-button:hover {
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
             transform: scale(1.1);
         }
+
         body {
             font-family: Arial, sans-serif;
             margin: 50px;
@@ -40,11 +42,13 @@
             align-items: center;
             height: 100vh;
         }
+
         h1 {
             color: #fbc02d;
             text-transform: uppercase;
             margin-bottom: 20px;
         }
+
         .container {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -52,15 +56,17 @@
             max-width: 1200px;
             width: 100%;
         }
+
         .cards {
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
-  
+
         body {
             overflow-y: hidden;
         }
+
         .card {
             padding: 20px;
             border-radius: 15px;
@@ -70,21 +76,40 @@
             color: white;
             text-align: left;
         }
-        .card:nth-child(1) { background: #ff5252; }
-        .card:nth-child(2) { background: #00e676; }
-        .card:nth-child(3) { background: #2979ff; }
-        .card:nth-child(4) { background: #ffca28; }
+        .card:hover{
+            cursor: pointer;
+            transform: scale(1.1);
+        }
+
+        .card:nth-child(1) {
+            background: #ff5252;
+        }
+
+        .card:nth-child(2) {
+            background: #00e676;
+        }
+
+        .card:nth-child(3) {
+            background: #2979ff;
+        }
+
+        .card:nth-child(4) {
+            background: #ffca28;
+        }
+
         .card span {
             display: block;
             font-size: 24px;
             margin-bottom: 10px;
         }
+
         .chart-container {
             background: #16213e;
             padding: 20px;
             border-radius: 15px;
             box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
         }
+
         .datetime {
             position: absolute;
             top: 10px;
@@ -93,76 +118,78 @@
             font-weight: bold;
             color: white;
         }
-        .chart-container:hover{
+
+        .chart-container:hover {
             cursor: pointer;
             transform: scale(1.1);
         }
+
         @media (max-width: 1200px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
+            .container {
+                grid-template-columns: 1fr;
+            }
 
-    .card {
-        font-size: 16px;
-    }
+            .card {
+                font-size: 16px;
+            }
 
-    .fixed-button {
-        padding: 12px 16px;
-    }
-}
+            .fixed-button {
+                padding: 12px 16px;
+            }
+        }
 
-@media (max-width: 768px) {
-    .container {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
 
-    .card {
-        font-size: 14px;
-        padding: 15px;
-    }
+            .card {
+                font-size: 14px;
+                padding: 15px;
+            }
 
-    h1 {
-        font-size: 1.8rem;
-    }
+            h1 {
+                font-size: 1.8rem;
+            }
 
-    .fixed-button {
-        bottom: 15px;
-        right: 15px;
-        padding: 10px 14px;
-    }
-}
+            .fixed-button {
+                bottom: 15px;
+                right: 15px;
+                padding: 10px 14px;
+            }
+        }
 
-@media (max-width: 480px) {
-    body {
-        margin: 20px;
-        align-items: stretch;
-    }
+        @media (max-width: 480px) {
+            body {
+                margin: 20px;
+                align-items: stretch;
+            }
 
-    .card {
-        font-size: 12px;
-        padding: 10px;
-    }
+            .card {
+                font-size: 12px;
+                padding: 10px;
+            }
 
-    h1 {
-        font-size: 1.5rem;
-        text-align: center;
-    }
+            h1 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
 
-    .fixed-button {
-        bottom: 10px;
-        right: 10px;
-        padding: 8px 12px;
-    }
+            .fixed-button {
+                bottom: 10px;
+                right: 10px;
+                padding: 8px 12px;
+            }
 
-    .datetime {
-        font-size: 14px;
-        right: 10px;
-    }
-}
-
+            .datetime {
+                font-size: 14px;
+                right: 10px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <button class="btn btn-primary fixed-button" onclick="openFeedbackModal()">Visualizar Feedbacks</button>
 
@@ -170,113 +197,112 @@
     <h1>Relatório de Avaliações</h1>
     <div class="container">
         <div class="cards">
-            <div class="card"><span>Média do Dia</span> {{ media_dia|round(2) }}</div>
-            <div class="card"><span>Média da Semana</span> {{ media_semana|round(2) }}</div>
-            <div class="card"><span>Média do Mês</span> {{ media_mes|round(2) }}</div>
-            <div class="card"><span>Média Total</span> {{ media_total|round(2) }}</div>
+            <div class="card" onclick="updateChart('dia')"><span>Média do Dia</span> {{ media_dia|round(2) }}</div>
+            <div class="card" onclick="updateChart('semana')"><span>Média da Semana</span> {{ media_semana|round(2) }}
+            </div>
+            <div class="card" onclick="updateChart('mes')"><span>Média do Mês</span> {{ media_mes|round(2) }}</div>
+            <div class="card" onclick="updateChart('total')"><span>Média Total</span> {{ media_total|round(2) }}</div>
         </div>
         <div class="chart-container">
             <canvas id="chartAvaliacao"></canvas>
         </div>
     </div>
-    <!-- Modal -->
-<div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="feedbackModalLabel" style="color: black;">Feedbacks Recebidos</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="feedbackModalLabel" style="color: black;">Feedbacks Recebidos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul id="feedbackList" class="list-group"></ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <ul id="feedbackList" class="list-group"></ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        </div>
-      </div>
     </div>
-  </div>
+
     <script>
         function updateDateTime() {
             const now = new Date();
-            const formattedDate = now.toLocaleString('pt-BR', {
-                day: '2-digit', month: '2-digit', year: 'numeric',
-                hour: '2-digit', minute: '2-digit', second: '2-digit'
-            });
-            document.getElementById('datetime').textContent = formattedDate;
+            document.getElementById('datetime').textContent = now.toLocaleString('pt-BR');
         }
         setInterval(updateDateTime, 1000);
         updateDateTime();
-    </script>
-    <script>
+
         var ctx = document.getElementById('chartAvaliacao').getContext('2d');
-        var chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-                datasets: [{
-                    label: 'Média de Avaliações por Dia',
-                    data: [{{ media_dom|round(2) }}, {{ media_seg|round(2) }}, {{ media_ter|round(2) }}, {{ media_qua|round(2) }}, {{ media_qui|round(2) }}, {{ media_sex|round(2) }}, {{ media_sab|round(2) }}],
-                    backgroundColor: 'rgba(255, 193, 7, 0.2)',
-                    borderColor: '#ff9800',
-                    borderWidth: 3,
-                    pointBackgroundColor: '#ff9800',
-                    pointBorderColor: '#fff',
-                    pointRadius: 6,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { color: '#fff' }
-                    },
-                    x: { ticks: { color: '#fff' } }
+        var chart;
+
+        function createChart(labels, data, label) {
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: 'rgba(255, 193, 7, 0.2)',
+                        borderColor: '#ff9800',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ff9800',
+                        pointRadius: 6,
+                        tension: 0.4
+                    }]
                 },
-                plugins: {
-                    legend: { labels: { color: '#fff' } }
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: {}
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        function updateChart(type) {
+            fetch(`/getData?type=${type}`)
+                .then(response => response.json())
+                .then(data => {
+                    createChart(data.labels, data.values, data.label);
+                })
+                .catch(error => console.error('Erro ao buscar dados:', error));
+        }
+
+        updateChart('dia');
+
+
     </script>
     <script>
-        // Define o tempo limite para recarregar a página (30 minutos)
-        let tempoRecarregar = 10 * 60 * 1000; // 10 minutos em milissegundos
-        
-        // Aguarda o tempo definido antes de recarregar a página
-        setTimeout(() => {
-            console.log("Recarregando a página...");
-            location.reload();
-        }, tempoRecarregar);
+        function openFeedbackModal() {
+            fetch('/feedbacks')
+                .then(response => response.json())
+                .then(data => {
+                    const feedbackList = document.getElementById('feedbackList');
+                    feedbackList.innerHTML = ''; // Limpa a lista
+
+                    if (data.length === 0) {
+                        feedbackList.innerHTML = '<li class="list-group-item">Nenhum feedback encontrado.</li>';
+                        return;
+                    }
+
+                    data.forEach(item => {
+                        const listItem = document.createElement('li');
+                        listItem.classList.add('list-group-item');
+                        listItem.innerHTML = `<strong>Data:</strong> ${new Date(item.data).toLocaleString()}<br><strong>Feedback:</strong> ${item.feedback}`;
+                        feedbackList.appendChild(listItem);
+                    });
+
+                    // Exibe o modal
+                    const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+                    feedbackModal.show();
+                })
+                .catch(error => console.error('Erro ao buscar feedbacks:', error));
+        }
     </script>
-  <script>
-    function openFeedbackModal() {
-      fetch('/feedbacks')
-        .then(response => response.json())
-        .then(data => {
-          const feedbackList = document.getElementById('feedbackList');
-          feedbackList.innerHTML = ''; // Limpa a lista
-  
-          if (data.length === 0) {
-            feedbackList.innerHTML = '<li class="list-group-item">Nenhum feedback encontrado.</li>';
-            return;
-          }
-  
-          data.forEach(item => {
-            const listItem = document.createElement('li');
-            listItem.classList.add('list-group-item');
-            listItem.innerHTML = `<strong>Data:</strong> ${new Date(item.data).toLocaleString()}<br><strong>Feedback:</strong> ${item.feedback}`;
-            feedbackList.appendChild(listItem);
-          });
-  
-          // Exibe o modal
-          const feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
-          feedbackModal.show();
-        })
-        .catch(error => console.error('Erro ao buscar feedbacks:', error));
-    }
-  </script>
 </body>
+
 </html>
