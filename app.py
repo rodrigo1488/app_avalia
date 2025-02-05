@@ -14,10 +14,22 @@ supabase_key = os.getenv(
 )
 supabase = create_client(supabase_url, supabase_key)
 
-@app.route('/index')
+@app.route('/')
 def home():
-    return render_template('index.html')
+    empresa_id = request.cookies.get('empresa_id')
+    empresa_nome = request.cookies.get('empresa_nome')
 
+    if not empresa_id or not empresa_nome:
+        # Redireciona para a página de login se os cookies não forem encontrados
+        return redirect('/login')
+
+    # Se os cookies existirem, renderiza a página inicial
+    return redirect('/index')
+
+
+@app.route('/index')
+def index():
+    return render_template('index.html')
 
 # Tela de login
 @app.route('/login', methods=['GET', 'POST'])
@@ -227,6 +239,28 @@ def listar_avaliacoes():
     except Exception as e:
         print(f"Erro ao buscar avaliações: {e}")
         return jsonify({"erro": "Erro inesperado ao buscar avaliações"}), 500
+
+@app.route('/get_logo_url', methods=['GET'])
+def get_logo_url():
+    # Recupera o ID da empresa dos cookies
+    empresa_id = request.cookies.get('empresa_id')
+
+    if not empresa_id:
+        return jsonify({"erro": "Usuário não autenticado"}), 401
+
+    try:
+        # Busca o logo da empresa no banco de dados
+        response = supabase.table('empresa').select('logo').eq('id', empresa_id).execute()
+        if not response.data:
+            return jsonify({"erro": "Logo não encontrado"}), 404
+
+        logo_url = response.data[0].get('logo')
+        return jsonify({"logo_url": logo_url}), 200
+
+    except Exception as e:
+        print(f"Erro ao buscar o logo: {e}")
+        return jsonify({"erro": "Erro ao buscar o logo"}), 500
+
 
 def atualizar_avaliacoes_periodicamente():
     with app.app_context():

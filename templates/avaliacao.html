@@ -103,7 +103,7 @@
 
 
         .logo-container {
-            margin-top: 150px;
+            margin-top: 50px;
         }
 
         .logo-container img {
@@ -117,7 +117,7 @@
            
             align-self: start;
             width: 600px;
-            height: 150px;
+            height: auto;
         }
 
         .modal {
@@ -228,7 +228,8 @@
         </div>
         <p id="mensagem"></p>
     </div>
-    <img src="/static/img/logo login.png" alt="Logo" class="logo-container">
+    <img id="logo-img" src="" alt="Logo da Empresa" class="logo-container">
+
 
 
     <div id="modal" class="modal" style="max-width: 50%; height: 30%;  justify-content: center; align-items: center;" >
@@ -247,7 +248,21 @@
         <button id="leaveFeedbackBtn">Deixar Feedback</button>
     </div>
 
-
+    <script>
+        window.onload = function() {
+          fetch('/get_logo_url')
+            .then(response => response.json())
+            .then(data => {
+              if (data.logo_url) {
+                document.getElementById('logo-img').src = data.logo_url;
+              } else {
+                console.log('Logo não encontrado');
+              }
+            })
+            .catch(error => console.error('Erro ao buscar logo:', error));
+        };
+      </script>
+      
 
 
 
